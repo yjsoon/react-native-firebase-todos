@@ -12,6 +12,20 @@ import firebase from "../database/firebaseDB";
 export default function NotesScreen({ navigation, route }) {
   const [notes, setNotes] = useState([]);
 
+  // When the screen loads, we start monitoring Firebase
+  useEffect(() => {
+    const unsubscribe = firebase
+      .firestore()
+      .collection("todos")
+      .onSnapshot((collection) => {
+        const updatedNotes = collection.docs.map((doc) => doc.data());
+        console.log(updatedNotes);
+        setNotes(updatedNotes);
+      });
+
+    return unsubscribe; // return the cleanup function
+  }, []);
+
   // This is to set up the top right button
   useEffect(() => {
     navigation.setOptions({
@@ -40,7 +54,6 @@ export default function NotesScreen({ navigation, route }) {
         id: notes.length.toString(),
       };
       firebase.firestore().collection("todos").add(newNote);
-      setNotes([...notes, newNote]);
     }
   }, [route.params?.text]);
 
