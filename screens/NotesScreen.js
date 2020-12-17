@@ -11,17 +11,15 @@ import firebase from "../database/firebaseDB";
 
 export default function NotesScreen({ navigation, route }) {
   const [notes, setNotes] = useState([]);
+  const db = firebase.firestore().collection("todos");
 
   // When the screen loads, we start monitoring Firebase
   useEffect(() => {
-    const unsubscribe = firebase
-      .firestore()
-      .collection("todos")
-      .onSnapshot((collection) => {
-        const updatedNotes = collection.docs.map((doc) => doc.data());
-        console.log(updatedNotes);
-        setNotes(updatedNotes);
-      });
+    const unsubscribe = db.onSnapshot((collection) => {
+      const updatedNotes = collection.docs.map((doc) => doc.data());
+      console.log(updatedNotes);
+      setNotes(updatedNotes);
+    });
 
     return unsubscribe; // return the cleanup function
   }, []);
@@ -53,7 +51,7 @@ export default function NotesScreen({ navigation, route }) {
         done: false,
         id: notes.length.toString(),
       };
-      firebase.firestore().collection("todos").add(newNote);
+      db.add(newNote);
     }
   }, [route.params?.text]);
 
