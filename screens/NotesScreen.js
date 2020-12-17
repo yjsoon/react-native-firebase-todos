@@ -17,6 +17,7 @@ export default function NotesScreen({ navigation, route }) {
   useEffect(() => {
     const unsubscribe = db.onSnapshot((collection) => {
       const updatedNotes = collection.docs.map((doc) => {
+        // create our own object that pulls the ID into a property
         const noteObject = {
           ...doc.data(),
           id: doc.id,
