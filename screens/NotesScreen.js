@@ -55,7 +55,7 @@ export default function NotesScreen({ navigation, route }) {
     if (route.params?.text) {
       const newNote = {
         title: route.params.text,
-        done: false,
+        done: false, // no more id line!
       };
       db.add(newNote);
     }
@@ -68,7 +68,7 @@ export default function NotesScreen({ navigation, route }) {
   // This deletes an individual note
   function deleteNote(id) {
     console.log("Deleting " + id);
-    db.doc(id).delete();
+    db.doc(id).delete(); // this is much simpler now we have the Firestore ID
   }
 
   // The function to render each row in our FlatList
