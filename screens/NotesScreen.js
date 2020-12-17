@@ -16,8 +16,14 @@ export default function NotesScreen({ navigation, route }) {
   // When the screen loads, we start monitoring Firebase
   useEffect(() => {
     const unsubscribe = db.onSnapshot((collection) => {
-      const updatedNotes = collection.docs.map((doc) => doc.data());
-      console.log(updatedNotes);
+      const updatedNotes = collection.docs.map((doc) => {
+        const noteObject = {
+          ...doc.data(),
+          id: doc.id,
+        };
+        console.log(noteObject);
+        return noteObject;
+      });
       setNotes(updatedNotes);
     });
 
@@ -49,7 +55,6 @@ export default function NotesScreen({ navigation, route }) {
       const newNote = {
         title: route.params.text,
         done: false,
-        id: notes.length.toString(),
       };
       db.add(newNote);
     }
@@ -62,11 +67,7 @@ export default function NotesScreen({ navigation, route }) {
   // This deletes an individual note
   function deleteNote(id) {
     console.log("Deleting " + id);
-    db.where("id", "==", id)
-      .get()
-      .then((querySnapshot) => {
-        querySnapshot.forEach((doc) => doc.ref.delete());
-      });
+    db.doc(id).delete();
   }
 
   // The function to render each row in our FlatList
