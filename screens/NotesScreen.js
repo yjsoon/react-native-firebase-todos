@@ -15,7 +15,7 @@ export default function NotesScreen({ navigation, route }) {
 
   // When the screen loads, we start monitoring Firebase
   useEffect(() => {
-    const unsubscribe = db.onSnapshot((collection) => {
+    const unsubscribe = db.orderBy("created").onSnapshot((collection) => {
       const updatedNotes = collection.docs.map((doc) => {
         // create our own object that pulls the ID into a property
         const noteObject = {
@@ -56,6 +56,9 @@ export default function NotesScreen({ navigation, route }) {
       const newNote = {
         title: route.params.text,
         done: false, // no more id line!
+        created: firebase.firestore.FieldValue.serverTimestamp(),
+        // alternative:
+        // created: Date.now().toString(),
       };
       db.add(newNote);
     }
